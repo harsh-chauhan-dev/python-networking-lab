@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Newsletter</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            color: #334155;
+        }
+        .wrapper {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .banner {
+            background-color: #0f172a;
+            color: #38bdf8;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .banner h2 {
+            margin: 0;
+            letter-spacing: 1px;
+            font-size: 24px;
+        }
+        .content {
+            padding: 30px;
+        }
+        .article {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .article:last-child {
+            border-bottom: none;
+        }
+        .article-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+        .footer {
+            background-color: #f1f5f9;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="banner">
+            <h2>{{newsletter_title}}</h2>
+            <p style="color: #94a3b8; font-size: 14px; margin-top: 5px;">Issue #{{issue_number}} • {{date}}</p>
+        </div>
+        <div class="content">
+            <p>Hello <strong>{{subscriber_name}}</strong>,</p>
+            <p>Here are your top updates for this week:</p>
+            
+            <div class="article">
+                <div class="article-title">{{headline_1}}</div>
+                <p>{{content_1}}</p>
+            </div>
+
+            <div class="article">
+                <div class="article-title">{{headline_2}}</div>
+                <p>{{content_2}}</p>
+            </div>
+        </div>
+        <div class="footer">
+            You are receiving this because you subscribed to {{newsletter_title}}.<br>
+            Sent with Python Mail Client Service.
+        </div>
+    </div>
+</body>
+</html>
