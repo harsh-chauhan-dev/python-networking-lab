@@ -118,7 +118,12 @@ def handle_send_custom_html(service: EmailService):
 def handle_send_bulk(service: EmailService):
     print("\n--- Send Bulk Template Emails ---")
     recipients_raw = input("Enter Receiver Emails (comma separated): ").strip()
-    receivers = [r.strip() for r in recipients_raw.split(",") if r.strip()]
+    receivers = list(dict.fromkeys(
+        r.strip().lower()
+        for r in recipients_raw.split(",")
+        if r.strip()
+    ))
+    print(f"Total unique receivers: {len(receivers)}")
 
     if not receivers:
         print("❌ No valid receivers provided.")
