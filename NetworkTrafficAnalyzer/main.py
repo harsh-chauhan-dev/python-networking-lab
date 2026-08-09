@@ -1,4 +1,4 @@
-from scapy.all import sniff,IP,TCP,UDP,ICMP
+from scapy.all import sniff,IP,TCP,UDP,ICMP,wrpcap
 from collections import Counter;
 
 protocol = Counter()
@@ -10,12 +10,13 @@ total_bytes = 0
 packet_count = 0
 tcp_flags = Counter()
 connections = Counter()
-
+captured_packets = []
 
 def analyzer_packet(packet):
 
     global total_bytes,packet_count
 
+    captured_packets.append(packet) 
     packet_count+=1
     total_bytes += len(packet)
    
@@ -38,9 +39,15 @@ def analyzer_packet(packet):
         endpoint2=(dst_ip,dst_port)
         connection = tuple(sorted([endpoint1,endpoint2]))
 
-      
-        
-        connections[connection] +=1
+        if connection not in connections:
+         connections[connection]={
+            "packets":0,
+            "bytes":0
+        }
+        connections[connection]["packets"]+=1
+        connections[connection]["bytes"]+=len(packet)
+
+        # connections[connection] +=1
       
         flags = packet[TCP].flags
 
@@ -73,6 +80,7 @@ def analyzer_packet(packet):
 
 sniff(prn=analyzer_packet,
       count=100)
+wrpcap("captures/capture.pcap",captured_packets)
 
 print("\n ===Protocol Statistics ===")
 
@@ -111,13 +119,20 @@ for flag, count in tcp_flags.most_common():
 
 print("\n=== TCP Connections ===")
 
-for connection, count in connections.most_common(10):
+sorted_connections = sorted(
+    connections.items(),
+    key=lambda item: item[1]["packets"],
+    reverse=True
+)
 
-    endpoint1,endpoint2 = connection
+for connection, stats in sorted_connections[:10]:
+
+    endpoint1, endpoint2 = connection
 
     print(
-        f"{endpoint1[0]}:{endpoint2[1]} "
+        f"{endpoint1[0]}:{endpoint1[1]} "
         f"<-> "
-        f"{endpoint2[0]}:{endpoint1[1]} "
-        f"({count} packets)"
+        f"{endpoint2[0]}:{endpoint2[1]} "
+        f"| Packets: {stats['packets']} "
+        f"| Bytes: {stats['bytes']}"
     )
