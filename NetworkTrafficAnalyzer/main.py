@@ -9,6 +9,8 @@ destination_ports = Counter()
 total_bytes = 0
 packet_count = 0
 tcp_flags = Counter()
+connections = Counter()
+
 
 def analyzer_packet(packet):
 
@@ -23,10 +25,23 @@ def analyzer_packet(packet):
     source_ip[packet[IP].src]+=1
     destination_ips[packet[IP].dst]+=1
     if TCP in packet:
-        protocol["TCP"] +=1
-        source_ports[packet[TCP].sport]+=1
-        destination_ports[packet[TCP].dport]+=1
+        src_ip = packet[IP].src
+        dst_ip = packet[IP].dst
+        src_port = packet[TCP].sport
+        dst_port = packet[TCP].dport
 
+        protocol["TCP"] +=1
+        source_ports[src_port]+=1
+        destination_ports[dst_port]+=1
+
+        endpoint1 = (src_ip,src_port)
+        endpoint2=(dst_ip,dst_port)
+        connection = tuple(sorted([endpoint1,endpoint2]))
+
+      
+        
+        connections[connection] +=1
+      
         flags = packet[TCP].flags
 
         if "S" in flags:
@@ -46,8 +61,8 @@ def analyzer_packet(packet):
 
     elif UDP in packet:
         protocol["UDP"]+=1
-        source_ports[packet[TCP].sport]+=1
-        destination_ports[packet[TCP].dport]+=1
+        source_ports[packet[UDP].sport]+=1
+        destination_ports[packet[UDP].dport]+=1
 
     elif ICMP in packet:
         protocol["ICMP"] +=1
@@ -93,3 +108,16 @@ print("\n=== TCP Flags ===")
 
 for flag, count in tcp_flags.most_common():
     print(f"{flag}: {count}")
+
+print("\n=== TCP Connections ===")
+
+for connection, count in connections.most_common(10):
+
+    endpoint1,endpoint2 = connection
+
+    print(
+        f"{endpoint1[0]}:{endpoint2[1]} "
+        f"<-> "
+        f"{endpoint2[0]}:{endpoint1[1]} "
+        f"({count} packets)"
+    )
