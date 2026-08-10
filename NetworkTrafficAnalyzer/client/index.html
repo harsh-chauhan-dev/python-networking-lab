@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Traffic Analyzer | Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                </div>
+                <div>
+                    <h1>Network Traffic Analyzer</h1>
+                    <p class="subtitle">Packet Capture & Protocol Analytics</p>
+                </div>
+            </div>
+
+            <div class="header-controls no-print">
+                <div class="status-badge" id="status-badge">
+                    <span class="status-dot"></span>
+                    <span id="status-text">Connecting...</span>
+                </div>
+
+                <div class="auto-refresh-toggle">
+                    <label class="switch">
+                        <input type="checkbox" id="auto-refresh-check" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="toggle-label">Auto Refresh (3s)</span>
+                </div>
+
+                <button id="export-pdf-btn" class="btn btn-primary">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    Export PDF Report
+                </button>
+
+                <button id="refresh-btn" class="btn btn-secondary">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-grid">
+            <!-- KPI Summary Cards -->
+            <section class="kpi-row">
+                <div class="kpi-card">
+                    <div class="kpi-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Total Packets</span>
+                        <h2 class="kpi-value" id="kpi-packet-count">0</h2>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 12H2"></path>
+                            <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+                            <line x1="6" y1="16" x2="6.01" y2="16"></line>
+                            <line x1="10" y1="16" x2="10.01" y2="16"></line>
+                        </svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Total Volume</span>
+                        <h2 class="kpi-value" id="kpi-total-volume">0 KB</h2>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Dominant Protocol</span>
+                        <h2 class="kpi-value" id="kpi-top-proto">N/A</h2>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="18" cy="5" r="3"></circle>
+                            <circle cx="6" cy="12" r="3"></circle>
+                            <circle cx="18" cy="19" r="3"></circle>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                        </svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Active Connections</span>
+                        <h2 class="kpi-value" id="kpi-conn-count">0</h2>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Control & Protocol Breakdown Row -->
+            <div class="two-col-grid">
+                <!-- Control Panel Card -->
+                <section class="glass-card control-card no-print">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            <h3>Start Packet Capture</h3>
+                        </div>
+                        <span class="badge">Live Sniffer</span>
+                    </div>
+                    <form id="capture-form" class="capture-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="input-count">Packet Count</label>
+                                <input type="number" id="input-count" value="100" min="10" max="2000">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="input-protocol">Protocol Filter</label>
+                                <select id="input-protocol">
+                                    <option value="">All Protocols</option>
+                                    <option value="tcp">TCP</option>
+                                    <option value="udp">UDP</option>
+                                    <option value="icmp">ICMP</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="input-host">Host IP Filter</label>
+                                <input type="text" id="input-host" placeholder="e.g. 192.168.1.1">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="input-port">Port Filter</label>
+                                <input type="number" id="input-port" placeholder="e.g. 80">
+                            </div>
+                        </div>
+
+                        <button type="submit" id="start-capture-btn" class="btn btn-primary btn-full">
+                            <span id="btn-text">Start Capture Session</span>
+                            <div id="btn-spinner" class="spinner hidden"></div>
+                        </button>
+                    </form>
+                    <div id="capture-message" class="message-banner hidden"></div>
+                </section>
+
+                <!-- Protocol Breakdown Card -->
+                <section class="glass-card">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                            <h3>Protocol Breakdown</h3>
+                        </div>
+                    </div>
+                    <div id="protocol-bars" class="protocol-list">
+                        <div class="empty-state">No traffic captured yet.</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- TCP Flags & Port Distribution -->
+            <div class="two-col-grid">
+                <!-- TCP Flags -->
+                <section class="glass-card">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                                <line x1="4" y1="22" x2="4" y2="15"></line>
+                            </svg>
+                            <h3>TCP Flags Distribution</h3>
+                        </div>
+                    </div>
+                    <div id="tcp-flags-container" class="flags-grid">
+                        <div class="flag-badge syn">SYN: <span id="flag-syn">0</span></div>
+                        <div class="flag-badge ack">ACK: <span id="flag-ack">0</span></div>
+                        <div class="flag-badge fin">FIN: <span id="flag-fin">0</span></div>
+                        <div class="flag-badge rst">RST: <span id="flag-rst">0</span></div>
+                        <div class="flag-badge psh">PSH: <span id="flag-psh">0</span></div>
+                    </div>
+                </section>
+
+                <!-- Saved PCAP Files -->
+                <section class="glass-card">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            <h3>Saved PCAP Captures</h3>
+                        </div>
+                    </div>
+                    <ul id="captures-list" class="captures-list">
+                        <li class="empty-state">No capture files available.</li>
+                    </ul>
+                </section>
+            </div>
+
+            <!-- Top Talkers Grid (IPs & Ports) -->
+            <div class="four-col-grid">
+                <!-- Top Source IPs -->
+                <section class="glass-card">
+                    <div class="card-header">
+                        <h4>Top Source IPs</h4>
+                    </div>
+                    <div id="top-src-ips" class="stat-list">
+                        <div class="empty-state">No data</div>
+                    </div>
+                </section>
+
+                <!-- Top Destination IPs -->
+                <section class="glass-card">
+                    <div class="card-header">
+                        <h4>Top Destination IPs</h4>
+                    </div>
+                    <div id="top-dst-ips" class="stat-list">
+                        <div class="empty-state">No data</div>
+                    </div>
+                </section>
+
+                <!-- Top Source Ports -->
+                <section class="glass-card">
+                    <div class="card-header">
+                        <h4>Top Source Ports</h4>
+                    </div>
+                    <div id="top-src-ports" class="stat-list">
+                        <div class="empty-state">No data</div>
+                    </div>
+                </section>
+
+                <!-- Top Destination Ports -->
+                <section class="glass-card">
+                    <div class="card-header">
+                        <h4>Top Destination Ports</h4>
+                    </div>
+                    <div id="top-dst-ports" class="stat-list">
+                        <div class="empty-state">No data</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- TCP Connection Streams Table -->
+            <section class="glass-card full-width">
+                <div class="card-header">
+                    <div class="header-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                            <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                            <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                        </svg>
+                        <h3>Active TCP Connection Streams</h3>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Endpoint A</th>
+                                <th>Stream Direction</th>
+                                <th>Endpoint B</th>
+                                <th>Packets</th>
+                                <th>Data Volume</th>
+                            </tr>
+                        </thead>
+                        <tbody id="connections-tbody">
+                            <tr>
+                                <td colspan="5" class="table-empty">No connection streams captured yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
