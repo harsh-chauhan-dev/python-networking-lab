@@ -1,4 +1,4 @@
-from resolver import query_record, RECORD_TYPES
+from resolver import query_record, RECORD_TYPES,reverse_dns
 
 
 def main():
@@ -19,6 +19,13 @@ def main():
             print("  No records found")
 
         print()
+    print("=== Reverse DNS ===")
+    ip_address = input("Enter IP address: ").strip()  
+    hostname = reverse_dns(ip_address)
+    if hostname in hostname:
+        print(f"  {ip_address} -> {hostname}")
+    else:
+        print("  No PTR record found")      
 
 
 if __name__ == "__main__":
